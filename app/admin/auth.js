@@ -2,7 +2,7 @@
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 
-export async function login(formData) {
+export async function login(prevState, formData) {
   const username = formData.get('username');
   const password = formData.get('password');
 
@@ -10,7 +10,12 @@ export async function login(formData) {
   const expectedPassword = process.env.ADMIN_PASSWORD || 'admin123';
 
   if (username === expectedUsername && password === expectedPassword) {
-    (await cookies()).set('admin_session', 'true', { httpOnly: true, path: '/' });
+    (await cookies()).set('admin_session', 'true', { 
+      httpOnly: true, 
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/' 
+    });
     redirect('/admin/products');
   } else {
     return { error: 'Invalid username or password' };

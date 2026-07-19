@@ -1,8 +1,11 @@
+
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { getProducts } from '../actions';
 import AdminProductsClient from './AdminProductsClient';
 import { logout } from '../auth';
+
+export const dynamic = 'force-dynamic';
 
 export default async function AdminProductsPage() {
   const session = (await cookies()).get('admin_session');
