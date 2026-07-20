@@ -1,5 +1,6 @@
 "use server";
 
+import cloudinary from '../../lib/cloudinary';
 import prisma from '../../prisma/db';
 import { revalidatePath } from 'next/cache';
 
@@ -14,7 +15,28 @@ export async function createProduct(formData) {
     const featured = formData.get('featured') === 'on';
     const status = formData.get('status');
 
-    const product = await prisma.product.create({
+    let imageUrl = "/images/products/placeholder.jpg";
+
+    const imageFile = formData.get("image");
+
+    if (imageFile && imageFile.name) {
+      const bytes = await imageFile.arrayBuffer();
+      const buffer = Buffer.from(bytes);
+
+      const uploadResult = await new Promise((resolve, reject) => {
+        cloudinary.uploader.upload_stream(
+          { folder: "products" },
+          (error, result) => {
+            if (error) reject(error);
+            else resolve(result);
+          }
+        ).end(buffer);
+      });
+
+      imageUrl = uploadResult.secure_url;
+    }
+
+    await prisma.product.create({
       data: {
         name,
         category,
@@ -22,13 +44,11 @@ export async function createProduct(formData) {
         stock,
         shortDescription,
         fullDescription,
-        image: "/images/products/placeholder.jpg",
+        image: imageUrl,
         featured,
         status,
       },
     });
-
-    console.log("Product created:", product);
 
     revalidatePath('/admin/products');
     revalidatePath('/products');
@@ -61,6 +81,27 @@ export async function updateProduct(id, formData) {
     const featured = formData.get('featured') === 'on';
     const status = formData.get('status');
 
+    let imageUrl;
+
+    const imageFile = formData.get("image");
+
+    if (imageFile && imageFile.name) {
+      const bytes = await imageFile.arrayBuffer();
+      const buffer = Buffer.from(bytes);
+
+      const uploadResult = await new Promise((resolve, reject) => {
+        cloudinary.uploader.upload_stream(
+          { folder: "products" },
+          (error, result) => {
+            if (error) reject(error);
+            else resolve(result);
+          }
+        ).end(buffer);
+      });
+
+      imageUrl = uploadResult.secure_url;
+    }
+
     await prisma.product.update({
       where: { id },
       data: {
@@ -72,6 +113,7 @@ export async function updateProduct(id, formData) {
         fullDescription,
         featured,
         status,
+        ...(imageUrl && { image: imageUrl }),
       },
     });
 
