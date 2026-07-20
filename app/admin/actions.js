@@ -2,8 +2,6 @@
 
 import prisma from '../../prisma/db';
 import { revalidatePath } from 'next/cache';
-import fs from 'fs/promises';
-import path from 'path';
 
 export async function createProduct(formData) {
   try {
@@ -15,27 +13,8 @@ export async function createProduct(formData) {
     const fullDescription = formData.get('fullDescription');
     const featured = formData.get('featured') === 'on';
     const status = formData.get('status');
-    const imageFile = formData.get('image');
 
-    let imagePath = '/images/products/placeholder.jpg';
-
-    if (imageFile && imageFile.name) {
-      const bytes = await imageFile.arrayBuffer();
-      const buffer = Buffer.from(bytes);
-      const filename = `${Date.now()}-${imageFile.name.replace(/[^a-zA-Z0-9.-]/g, '')}`;
-      const uploadDir = path.join(process.cwd(), 'public/uploads');
-      
-      try {
-        await fs.access(uploadDir);
-      } catch {
-        await fs.mkdir(uploadDir, { recursive: true });
-      }
-      
-      await fs.writeFile(path.join(uploadDir, filename), buffer);
-      imagePath = `/uploads/${filename}`;
-    }
-
-    await prisma.product.create({
+    const product = await prisma.product.create({
       data: {
         name,
         category,
@@ -43,21 +22,33 @@ export async function createProduct(formData) {
         stock,
         shortDescription,
         fullDescription,
-        image: imagePath,
+        image: "/images/products/placeholder.jpg",
         featured,
         status,
       },
     });
 
+    console.log("Product created:", product);
+
     revalidatePath('/admin/products');
     revalidatePath('/products');
     revalidatePath('/');
-    return { success: true, message: 'Product added successfully.' };
+
+    return {
+      success: true,
+      message: 'Product added successfully.'
+    };
+
   } catch (error) {
-    console.error('Error creating product:', error);
-    return { success: false, message: 'Failed to add product.' };
+    console.error('CREATE PRODUCT ERROR:', error);
+
+    return {
+      success: false,
+      message: error.message
+    };
   }
 }
+
 
 export async function updateProduct(id, formData) {
   try {
@@ -69,50 +60,41 @@ export async function updateProduct(id, formData) {
     const fullDescription = formData.get('fullDescription');
     const featured = formData.get('featured') === 'on';
     const status = formData.get('status');
-    const imageFile = formData.get('image');
-
-    const updateData = {
-      name,
-      category,
-      price,
-      stock,
-      shortDescription,
-      fullDescription,
-      featured,
-      status,
-    };
-
-    if (imageFile && imageFile.name) {
-      const bytes = await imageFile.arrayBuffer();
-      const buffer = Buffer.from(bytes);
-      const filename = `${Date.now()}-${imageFile.name.replace(/[^a-zA-Z0-9.-]/g, '')}`;
-      const uploadDir = path.join(process.cwd(), 'public/uploads');
-      
-      try {
-        await fs.access(uploadDir);
-      } catch {
-        await fs.mkdir(uploadDir, { recursive: true });
-      }
-      
-      await fs.writeFile(path.join(uploadDir, filename), buffer);
-      updateData.image = `/uploads/${filename}`;
-    }
 
     await prisma.product.update({
       where: { id },
-      data: updateData,
+      data: {
+        name,
+        category,
+        price,
+        stock,
+        shortDescription,
+        fullDescription,
+        featured,
+        status,
+      },
     });
 
     revalidatePath('/admin/products');
     revalidatePath('/products');
     revalidatePath(`/product/${id}`);
     revalidatePath('/');
-    return { success: true, message: 'Product updated successfully.' };
+
+    return {
+      success: true,
+      message: 'Product updated successfully.'
+    };
+
   } catch (error) {
-    console.error('Error updating product:', error);
-    return { success: false, message: 'Failed to update product.' };
+    console.error('UPDATE PRODUCT ERROR:', error);
+
+    return {
+      success: false,
+      message: error.message
+    };
   }
 }
+
 
 export async function deleteProduct(id) {
   try {
@@ -123,21 +105,34 @@ export async function deleteProduct(id) {
     revalidatePath('/admin/products');
     revalidatePath('/products');
     revalidatePath('/');
-    return { success: true, message: 'Product deleted successfully.' };
+
+    return {
+      success: true,
+      message: 'Product deleted successfully.'
+    };
+
   } catch (error) {
-    console.error('Error deleting product:', error);
-    return { success: false, message: 'Failed to delete product.' };
+    console.error('DELETE PRODUCT ERROR:', error);
+
+    return {
+      success: false,
+      message: error.message
+    };
   }
 }
+
 
 export async function getProducts() {
   try {
     const products = await prisma.product.findMany({
       orderBy: { createdAt: 'desc' }
     });
+
     return products;
+
   } catch (error) {
-    console.error('Error fetching products:', error);
+    console.error('GET PRODUCTS ERROR:', error);
+
     return [];
   }
 }
