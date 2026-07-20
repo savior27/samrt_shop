@@ -32,26 +32,30 @@ export default function AdminProductsClient({ initialProducts }) {
     setTimeout(() => setMessage(null), 3000);
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    const formData = new FormData(e.target);
-    
-    let res;
-    if (editingProduct) {
-      res = await updateProduct(editingProduct.id, formData);
-    } else {
-      res = await createProduct(formData);
-    }
 
-    if (res?.success) {
-      showMessage(`✅ ${res.message}`);
-      closeModal();
-    } else {
-      showMessage(`❌ ${res?.message || 'Something went wrong.'}`);
-    }
-    setIsSubmitting(false);
-  };
+  const handleSubmit = async (e) => {
+  e.preventDefault();
+  setIsSubmitting(true);
+
+  const formData = new FormData(e.currentTarget);
+
+  let res;
+
+  if (editingProduct) {
+    res = await updateProduct(editingProduct.id, formData);
+  } else {
+    res = await createProduct(formData);
+  }
+
+  if (res?.success) {
+    showMessage(`✅ ${res.message}`);
+    closeModal();
+  } else {
+    showMessage(`❌ ${res?.message || 'Something went wrong.'}`);
+  }
+
+  setIsSubmitting(false);
+};
 
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this product?")) {
@@ -150,7 +154,9 @@ export default function AdminProductsClient({ initialProducts }) {
               </button>
             </div>
             
-            <form onSubmit={handleSubmit} className="p-6">
+           <form 
+  onSubmit={handleSubmit} encType="multipart/form-data"  className="p-6"
+>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                 <div className="space-y-2">
                   <label className="block text-sm font-bold text-gray-700 dark:text-gray-300">Product Name</label>
