@@ -47,7 +47,7 @@ export default function ProductCard({ product }) {
         </Link>
         
         <p className="text-gray-500 dark:text-gray-400 text-sm line-clamp-2 mb-6 flex-grow leading-relaxed">
-          {product.description}
+          {product.shortDescription || product.description}
         </p>
         
         <div className="flex items-center justify-between mt-auto pt-4 border-t border-gray-100 dark:border-gray-800">

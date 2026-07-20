@@ -56,19 +56,6 @@ export default function Footer() {
               </li>
             </ul>
           </div>
-{/* Newsletter Subscription Form 
-          <div>
-            <h3 className="font-bold text-gray-900 dark:text-white text-lg mb-6 tracking-tight">Newsletter</h3>
-            <p className="text-gray-500 dark:text-gray-400 mb-4 text-sm leading-relaxed">Subscribe to get special offers, free giveaways, and updates.</p>
-            <div className="flex bg-gray-50 dark:bg-gray-900 rounded-xl p-1 border border-gray-200 dark:border-gray-800 focus-within:ring-2 focus-within:ring-primary-500 focus-within:border-primary-500 transition-all">
-              <input type="email" placeholder="Enter your email" className="w-full bg-transparent px-4 text-gray-900 dark:text-white text-sm outline-none" />
-              <button className="bg-gray-900 dark:bg-primary-600 hover:bg-gray-800 dark:hover:bg-primary-500 text-white p-3 rounded-lg transition-colors">
-                <Send className="w-4 h-4" />
-              </button>
-            </div>
-          </div>
-
-          */}
         </div>
 
         

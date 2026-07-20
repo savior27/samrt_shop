@@ -16,9 +16,7 @@
     "next": "^15.0.0",
     "prisma": "^5.10.0",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "server-only": "^0.0.1",
-    "tailwind-merge": "^2.2.1"
+    "react-dom": "^19.0.0"
   },
   "devDependencies": {
     "@types/react": "^19.0.0",

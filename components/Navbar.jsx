@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { Menu, X, ShoppingBag, Sun, Moon, Search } from 'lucide-react';
 import { useTheme } from './ThemeProvider';
 import clsx from 'clsx';
@@ -13,6 +13,7 @@ export default function Navbar() {
   const [mounted, setMounted] = useState(false);
   const { theme, toggleTheme } = useTheme();
   const pathname = usePathname();
+  const router = useRouter();
 
   useEffect(() => {
     setMounted(true);
@@ -81,7 +82,7 @@ export default function Navbar() {
           <div className="hidden md:flex items-center space-x-2">
             <button 
               onClick={() => {
-                window.location.href = '/products';
+                router.push('/products');
               }}
               className="p-2 text-gray-500 hover:text-primary-600 dark:text-gray-400 dark:hover:text-primary-400 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
             >
@@ -139,7 +140,7 @@ export default function Navbar() {
               <button 
                 onClick={() => {
                   setIsOpen(false);
-                  window.location.href = '/products';
+                  router.push('/products');
                 }}
                 className="flex items-center gap-2 text-gray-600 dark:text-gray-300"
               >
