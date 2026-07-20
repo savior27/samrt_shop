@@ -229,6 +229,7 @@ export default function AdminProductsClient({ initialProducts }) {
             </form>
           </div>
         </div>
+        </div>
       )}
     </div>
   );
